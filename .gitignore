@@ -1,0 +1,54 @@
+# .gitignore for Electron projects
+
+# Node.js dependencies
+node_modules/
+
+# Build and packaging directories
+dist/
+release/
+out/
+*.asar
+*.nupkg
+*.appimage
+*.snap
+*.exe
+*.deb
+*.rpm
+*.zip
+*.tar.gz
+
+# Debug and temporary files
+*.log
+*.tmp
+*.core
+
+# Development environment
+.vscode/
+*.sublime*
+*.iml
+.idea/
+*.swp
+*.swo
+*.bak
+*.bak.*
+*.bak_*~
+*.bak_*
+
+# macOS files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Windows files
+Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux files
+.directory
+.Trash-*/

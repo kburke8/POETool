@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Scarab Pricing Tool</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #333;
+        color: #ddd;
+        margin: 0;
+        padding: 1rem;
+      }
+      h1 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+      }
+      button {
+        background-color: #444;
+        color: #ddd;
+        border: none;
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        cursor: pointer;
+        outline: none;
+        margin-bottom: 1rem;
+      }
+      button:hover {
+        background-color: #555;
+      }
+      #scarabPrices {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+      }
+      .scarab-price {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        background-color: #444;
+        border-radius: 0.5rem;
+      }
+      .scarab-name {
+        margin-bottom: 0.5rem;
+      }
+      .highlight {
+        color: red;
+      }
+      .clipboard-text {
+        cursor: pointer;
+        display: inline;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Scarab Prices</h1>
+    <button id="fetchPrices">Fetch Prices</button>
+    <div id="scarabPrices"></div>
+    <script>
+      const fetchPricesButton = document.getElementById('fetchPrices');
+      const scarabPricesDiv = document.getElementById('scarabPrices');
+      const scarabOrder = [
+        'Bestiary',
+        'Reliquary',
+        'Torment',
+        'Sulphite',
+        'Metamorph',
+        'Legion',
+        'Ambush',
+        'Blight',
+        'Shaper',
+        'Expedition',
+        'Cartography',
+        'Harbinger',
+        'Elder',
+        'Divination',
+        'Breach',
+        'Abyss',
+      ];
+      const scarabRarities = ['Rusted', 'Polished', 'Gilded', 'Winged'];
+      const scarabStocks = {
+        Rusted: 20,
+        Polished: 20,
+        Gilded: 10,
+        Winged: 3,
+      };
+
+      function calculateTotalPrice(price, stock) {
+        return Math.round(price * stock);
+      }
+
+      function shouldHighlightConversion(scarabRarity, price, nextRarityPrice) {
+        if (scarabRarity === 'Winged') {
+          return false;
+        }
+        return nextRarityPrice > price * 3;
+      }
+
+      function copyToClipboard(text) {
+        const el = document.createElement('textarea');
+        el.value = text;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+      }
+
+      fetchPricesButton.onclick = async () => {
+        const league = 'Crucible';
+        const apiUrl = `https://poe.ninja/api/data/ItemOverview?league=${league}&type=Scarab`;
+
+        try {
+          const response =
+          await fetch(apiUrl);
+      const data = await response.json();
+      const scarabPrices = data.lines.reduce(
+        (result, item) => ({
+          ...result,
+          [item.name]: item.chaosValue,
+        }),
+        {}
+      );
+
+      scarabPricesDiv.innerHTML = scarabOrder
+        .map(
+          (scarabType) => `
+          <div class="scarab-price">
+            <div class="scarab-name">${scarabType} Scarabs:</div>
+            ${scarabRarities
+              .map((rarity, index) => {
+                const price = scarabPrices[`${rarity} ${scarabType} Scarab`] || '-';
+                const stock = scarabStocks[rarity];
+                const totalPrice = calculateTotalPrice(price, stock);
+                const nextRarity = scarabRarities[index + 1];
+                const nextRarityPrice = scarabPrices[`${nextRarity} ${scarabType} Scarab`];
+
+                const highlightConversion = shouldHighlightConversion(rarity, price, nextRarityPrice);
+
+                return `
+                  <div>
+                    ${rarity}: ${price} chaos
+                    <span class="clipboard-text ${highlightConversion ? 'highlight' : ''}" onclick="copyToClipboard('${totalPrice}/${stock}')">
+                      (${totalPrice}/${stock})
+                    </span>
+                  </div>`;
+              })
+              .join('')}
+          </div>
+        `
+        )
+        .join('');
+    } catch (error) {
+      console.error('Error fetching scarab prices:', error);
+    }
+  };
+</script>
+</body>
+</html>
