@@ -9,6 +9,9 @@ interface ScarabStocks {
 
 const fetchPricesButton: HTMLElement | null = document.getElementById('fetchPrices');
 const scarabPricesDiv: HTMLElement | null = document.getElementById('scarabPrices');
+const priceMultiplierSlider: HTMLInputElement | null = document.getElementById('priceMultiplier') as HTMLInputElement;
+const priceMultiplierOutput: HTMLOutputElement | null = document.getElementById('priceMultiplierOutput') as HTMLOutputElement;
+
 const scarabOrder: string[] = [
   'Bestiary',
   'Reliquary',
@@ -35,8 +38,8 @@ const scarabStocks: ScarabStocks = {
   Winged: 3,
 };
 
-function calculateTotalPrice(price: number, stock: number): number {
-  return Math.round(price * stock);
+function calculateTotalPrice(price: number, stock: number, priceMultiplier: number): number {
+  return Math.round(price * stock * (priceMultiplier / 100));
 }
 
 function shouldHighlightConversion(scarabRarity: ScarabRarity, price: number, nextRarityPrice: number): boolean {
@@ -54,6 +57,17 @@ function copyToClipboard(text: string, stock: number): void {
   document.execCommand('copy');
   document.body.removeChild(el);
 }
+
+if (priceMultiplierSlider && priceMultiplierOutput) {
+  priceMultiplierSlider.addEventListener('input', () => {
+    priceMultiplierOutput.value = `${priceMultiplierSlider.value}%`;
+
+    if (fetchPricesButton) {
+      fetchPricesButton.click(); // Fetch and display prices when the slider value changes
+    }
+  });
+}
+
 
 if (fetchPricesButton) {
   fetchPricesButton.onclick = async () => {
@@ -81,7 +95,7 @@ if (fetchPricesButton) {
                 .map((rarity, index) => {
                   const price: number = scarabPrices[`${rarity} ${scarabType} Scarab`] || 0;
                   const stock: number = scarabStocks[rarity];
-                  const totalPrice: number = calculateTotalPrice(price, stock);
+                  const totalPrice: number = calculateTotalPrice(price, stock, parseInt(priceMultiplierSlider.value));
                   const nextRarity: ScarabRarity | undefined = scarabRarities[index + 1];
                   const nextRarityPrice: number = scarabPrices[`${nextRarity} ${scarabType} Scarab`];
 

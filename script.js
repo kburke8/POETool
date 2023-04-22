@@ -48,6 +48,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var _this = this;
 var fetchPricesButton = document.getElementById('fetchPrices');
 var scarabPricesDiv = document.getElementById('scarabPrices');
+var priceMultiplierSlider = document.getElementById('priceMultiplier');
+var priceMultiplierOutput = document.getElementById('priceMultiplierOutput');
 var scarabOrder = [
     'Bestiary',
     'Reliquary',
@@ -73,8 +75,8 @@ var scarabStocks = {
     Gilded: 10,
     Winged: 3,
 };
-function calculateTotalPrice(price, stock) {
-    return Math.round(price * stock);
+function calculateTotalPrice(price, stock, priceMultiplier) {
+    return Math.round(price * stock * (priceMultiplier / 100));
 }
 function shouldHighlightConversion(scarabRarity, price, nextRarityPrice) {
     if (scarabRarity === 'Winged' || scarabRarity === 'Gilded') {
@@ -89,6 +91,14 @@ function copyToClipboard(text, stock) {
     el.select();
     document.execCommand('copy');
     document.body.removeChild(el);
+}
+if (priceMultiplierSlider && priceMultiplierOutput) {
+    priceMultiplierSlider.addEventListener('input', function () {
+        priceMultiplierOutput.value = "".concat(priceMultiplierSlider.value, "%");
+        if (fetchPricesButton) {
+            fetchPricesButton.click(); // Fetch and display prices when the slider value changes
+        }
+    });
 }
 if (fetchPricesButton) {
     fetchPricesButton.onclick = function () { return __awaiter(_this, void 0, void 0, function () {
@@ -117,7 +127,7 @@ if (fetchPricesButton) {
                             .map(function (rarity, index) {
                             var price = scarabPrices_1["".concat(rarity, " ").concat(scarabType, " Scarab")] || 0;
                             var stock = scarabStocks[rarity];
-                            var totalPrice = calculateTotalPrice(price, stock);
+                            var totalPrice = calculateTotalPrice(price, stock, parseInt(priceMultiplierSlider.value));
                             var nextRarity = scarabRarities[index + 1];
                             var nextRarityPrice = scarabPrices_1["".concat(nextRarity, " ").concat(scarabType, " Scarab")];
                             var highlightConversion = shouldHighlightConversion(rarity, price, nextRarityPrice);

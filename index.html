@@ -8,6 +8,11 @@
   <body>
     <h1>Scarab Prices</h1>
     <button id="fetchPrices">Fetch Prices</button>
+    <div>
+      <label for="priceMultiplier">Price Multiplier: </label>
+      <input type="range" id="priceMultiplier" name="priceMultiplier" min="0" max="200" step="1" value="100" />
+      <output for="priceMultiplier" id="priceMultiplierOutput">100%</output>
+    </div>
     <div id="scarabPrices"></div>
     <script src="script.js"></script>
   </body>
