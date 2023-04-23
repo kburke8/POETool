@@ -1,62 +1,14 @@
-type ScarabRarity = 'Rusted' | 'Polished' | 'Gilded' | 'Winged';
-
-interface ScarabStocks {
-  Rusted: number;
-  Polished: number;
-  Gilded: number;
-  Winged: number;
-}
+import { ScarabRarity, ScarabStocks } from './types';
+import { scarabOrder, scarabRarities, scarabStocks } from './scarabData';
+import { calculateTotalPrice, shouldHighlightConversion } from './priceUtils';
+import { copyToClipboard } from './clipboardUtils';
 
 const fetchPricesButton: HTMLElement | null = document.getElementById('fetchPrices');
 const scarabPricesDiv: HTMLElement | null = document.getElementById('scarabPrices');
 const priceMultiplierSlider: HTMLInputElement | null = document.getElementById('priceMultiplier') as HTMLInputElement;
 const priceMultiplierOutput: HTMLOutputElement | null = document.getElementById('priceMultiplierOutput') as HTMLOutputElement;
 
-const scarabOrder: string[] = [
-  'Bestiary',
-  'Reliquary',
-  'Torment',
-  'Sulphite',
-  'Metamorph',
-  'Legion',
-  'Ambush',
-  'Blight',
-  'Shaper',
-  'Expedition',
-  'Cartography',
-  'Harbinger',
-  'Elder',
-  'Divination',
-  'Breach',
-  'Abyss',
-];
-const scarabRarities: ScarabRarity[] = ['Rusted', 'Polished', 'Gilded', 'Winged'];
-const scarabStocks: ScarabStocks = {
-  Rusted: 20,
-  Polished: 20,
-  Gilded: 10,
-  Winged: 3,
-};
-
-function calculateTotalPrice(price: number, stock: number, priceMultiplier: number): number {
-  return Math.round(price * stock * (priceMultiplier / 100));
-}
-
-function shouldHighlightConversion(scarabRarity: ScarabRarity, price: number, nextRarityPrice: number): boolean {
-  if (scarabRarity === 'Winged' || scarabRarity === 'Gilded') {
-    return false;
-  }
-  return nextRarityPrice > price * 3;
-}
-
-function copyToClipboard(text: string, stock: number): void {
-  const el: HTMLTextAreaElement = document.createElement('textarea');
-  el.value = `~price ${text}/${stock} chaos`;
-  document.body.appendChild(el);
-  el.select();
-  document.execCommand('copy');
-  document.body.removeChild(el);
-}
+(window as any).copyToClipboard = copyToClipboard; // Expose the copyToClipboard function to the global scope
 
 if (priceMultiplierSlider && priceMultiplierOutput) {
   priceMultiplierSlider.addEventListener('input', () => {
@@ -67,7 +19,6 @@ if (priceMultiplierSlider && priceMultiplierOutput) {
     }
   });
 }
-
 
 if (fetchPricesButton) {
   fetchPricesButton.onclick = async () => {

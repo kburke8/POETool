@@ -1,15 +1,23 @@
 {
   "name": "scarabpricer",
   "version": "1.0.0",
-  "description": "",
+  "description": "This is a web application for pricing Path of Exile scarabs based on data from poe.ninja API. It allows users to input a multiplier to the price, view the total price of scarabs in their inventory, and copy the appropriate price for each scarab to the clipboard.",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
-  },  
+    "build": "webpack",
+    "start": "webpack-dev-server --open",
+    "electron": "electron ."
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "electron": "^24.1.2"
+  },
+  "devDependencies": {
+    "ts-loader": "^9.4.2",
+    "webpack": "^5.80.0",
+    "webpack-cli": "^5.0.2",
+    "webpack-dev-server": "^4.13.3"
   }
 }
