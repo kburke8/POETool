@@ -7,6 +7,7 @@ const fetchPricesButton: HTMLElement | null = document.getElementById('fetchPric
 const scarabPricesDiv: HTMLElement | null = document.getElementById('scarabPrices');
 const priceMultiplierSlider: HTMLInputElement | null = document.getElementById('priceMultiplier') as HTMLInputElement;
 const priceMultiplierOutput: HTMLOutputElement | null = document.getElementById('priceMultiplierOutput') as HTMLOutputElement;
+const resetSliderButton: HTMLElement | null = document.getElementById('resetSlider');
 
 (window as any).copyToClipboard = copyToClipboard; // Expose the copyToClipboard function to the global scope
 
@@ -20,12 +21,34 @@ if (priceMultiplierSlider && priceMultiplierOutput) {
   });
 }
 
+if (resetSliderButton && priceMultiplierSlider) {
+  resetSliderButton.addEventListener('click', () => {
+    priceMultiplierSlider.value = '100';
+    if (priceMultiplierOutput) {
+      priceMultiplierOutput.textContent = '100';
+    }
+    if (fetchPricesButton) {
+      fetchPricesButton.click(); // Fetch and display prices when the slider value changes
+    }
+  });
+}
+
+//Simple in-memory cache of scarab prices
+let cachedScarabPrices: any | null = null;
+const cacheTTL = 2 * 60 * 1000; // 5 minutes
+let cacheTimestamp: number | null = null;
+
 if (fetchPricesButton) {
   fetchPricesButton.onclick = async () => {
 
     const league: string = 'Crucible';
 
     try {
+      const currentTime = new Date().getTime();
+
+      if (cachedScarabPrices && cacheTimestamp && currentTime - cacheTimestamp < cacheTTL) {
+        return cachedScarabPrices;
+      }
       const data: any = await window.electronAPI.retrievePrices(league);
       const scarabPrices: { [key: string]: number } = data.lines.reduce(
         (result: { [key: string]: number }, item: { name: string; chaosValue: number }) => ({
@@ -34,6 +57,9 @@ if (fetchPricesButton) {
         }),
         {}
       );
+
+      cachedScarabPrices = scarabPrices;
+      cacheTimestamp = currentTime;
 
       if (scarabPricesDiv) {
         scarabPricesDiv.innerHTML = scarabOrder
