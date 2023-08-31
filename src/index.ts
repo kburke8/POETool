@@ -26,16 +26,47 @@ const createWindow = (): void => {
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
-  ipcMain.handle('retrieve-prices', async (event, league: string) => {
-    return await retrievePrices(league)
-  });
 };
+
+ipcMain.handle('retrieve-prices', async (event, league: string) => {
+  return await retrievePrices(league)
+});
+
+ipcMain.handle('retrieve-divine-prices', async (event, league: string) => {
+  return await retrieveDivinePrice(league)
+});
 
 async function retrievePrices(league: string){
   console.log("Retrieving prices")
   const apiUrl: string = `https://poe.ninja/api/data/ItemOverview?league=${league}&type=Scarab`;
   const response: Response = await fetch(apiUrl);
   return response.json();
+}
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
+app.on('ready', createWindow);
+
+// Quit when all windows are closed, except on macOS. There, it's common
+// for applications and their menu bar to stay active until the user quits
+// explicitly with Cmd + Q.
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
+
+async function retrieveDivinePrice(league: string){
+  let divineOrbPrice = 225;
+  console.log("Retrieving divine price")
+  const apiUrl: string = `https://poe.ninja/api/data/currencyoverview?league=${league}&type=Currency`;
+  const response: Response = await fetch(apiUrl);
+  const currencyData = await response.json();
+  const divineOrbData = currencyData.lines.find((line: any) => line.currencyTypeName === 'Divine Orb');
+  if (divineOrbData) {
+    divineOrbPrice = divineOrbData.chaosEquivalent;
+  }
+  return divineOrbPrice;
 }
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

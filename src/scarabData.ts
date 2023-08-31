@@ -2,28 +2,28 @@ import { ScarabRarity, ScarabStocks } from './types';
 
 export const scarabOrder: string[] = [
   'Bestiary',
-  'Reliquary',
-  'Torment',
-  'Sulphite',
-  'Metamorph',
-  'Legion',
-  'Ambush',
-  'Blight',
   'Shaper',
+  'Reliquary',
   'Expedition',
+  'Torment',
   'Cartography',
+  'Sulphite',
   'Harbinger',
+  'Metamorph',
   'Elder',
+  'Legion',
   'Divination',
+  'Ambush',
   'Breach',
+  'Blight',
   'Abyss',
 ];
 
 export const scarabRarities: ScarabRarity[] = ['Rusted', 'Polished', 'Gilded', 'Winged'];
 
 export const scarabStocks: ScarabStocks = {
-  Rusted: 20,
-  Polished: 20,
+  Rusted: 40,
+  Polished: 30,
   Gilded: 10,
   Winged: 3,
 };
