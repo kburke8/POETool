@@ -154,7 +154,7 @@ function MapScarabPrice(scarabType: string, rarity: string, index: number) {
   // const stock: number = scarabStocks[rarity];
   console.log('scarabMultiplierOutput?.value:', scarabMultiplierOutput?.value);
 
-  let currency = 'divines';
+  let currency = 'divine';
   let lotPrice = divinePrice;
   let stock: number = calculateOptimalStock(multipliedPrice, divinePrice);
   if (stock > 30){
@@ -162,7 +162,7 @@ function MapScarabPrice(scarabType: string, rarity: string, index: number) {
     currency = 'chaos';
     stock = calculateOptimalStock(multipliedPrice, lotPrice);
   }
-  const totalCost = currency == "divines" ? 1 : lotPrice
+  const totalCost = currency == "divine" ? 1 : lotPrice
   const pricePer = (lotPrice / stock).toFixed(2);;
   const nextRarity: ScarabRarity | undefined = scarabRarities[index + 1];
   const nextRarityPrice: number = scarabPrices[`${nextRarity} ${scarabType} Scarab`];
